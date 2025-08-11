@@ -61,7 +61,7 @@ const ProductsPage: React.FC<ProductPageProps> = ({ page, limit }) => {
   const totalPages = Math.ceil((productsData?.total || 0) / limit);
 
   return (
-    <div className="flex flex-col gap-9 p-4 my-6 items-center h-[92vh] justify-between ">
+    <div className="flex flex-col max-w-[1700px] mx-auto w-full gap-9 p-4 my-6 items-center h-[92vh] justify-between ">
       <h1 className="heading">products list</h1>
 
       {isError && (

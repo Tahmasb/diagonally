@@ -25,7 +25,7 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
     <div className="overflow-auto w-full mb-auto">
       <table className="w-full border-collapse">
         <thead>
-          <tr className="table-row-custom bg-blue-50">
+          <tr className="sticky -top-px  table-row-custom bg-blue-50">
             <th className="px-2 py-1 text-left">id</th>
             <th className="px-2 py-1 text-left">title</th>
             <SortableHeader

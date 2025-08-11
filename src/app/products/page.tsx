@@ -6,7 +6,7 @@ type ProductProps = {
 
 const Products = async ({ searchParams }: ProductProps) => {
   const { page, limit } = await searchParams;
-  return <ProductsPage page={Number(page) || 1} limit={Number(limit) || 10} />;
+  return <ProductsPage page={Number(page) || 1} limit={Number(limit) || 20} />;
 };
 
 export default Products;
