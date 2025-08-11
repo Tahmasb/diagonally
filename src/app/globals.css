@@ -1,1 +1,22 @@
 @import "tailwindcss";
+
+@theme {
+  --color-brand: #0046ff;
+}
+
+.heading {
+  @apply font-bold text-lg whitespace-nowrap;
+}
+
+.table-row-custom {
+  @apply border  *:h-10 *:border border-gray-300 *:border-gray-300 text-center;
+}
+td,
+th {
+  text-align: center;
+  padding: 0 5px;
+}
+
+.test {
+  color: #004c62;
+}
