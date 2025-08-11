@@ -1,38 +1,29 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useState, useMemo, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { mainAxios } from "@utils/axios";
 import ProductsTable from "@modules/ProductsTable";
 import { ProductApiResponse } from "src/types/Product";
 import Pagination from "@elements/Pagination";
 import Loading from "@elements/Loading";
 
-type ProductPageProps = { page: number; limit: number };
+type ProductPageProps = {
+  page: number;
+  limit: number;
+  initialData: ProductApiResponse | null;
+};
 
-const ProductsPage: React.FC<ProductPageProps> = ({ page, limit }) => {
-  const [productsData, setProductsData] = useState<ProductApiResponse>();
-  const [isError, setIsError] = useState(false);
-  const [isLoadingPage, setIsLoadingPage] = useState(true);
-
+const ProductsPage: React.FC<ProductPageProps> = ({
+  page,
+  limit,
+  initialData,
+}) => {
+  const [productsData] = useState<ProductApiResponse | null>(initialData);
   const [sortField, setSortField] = useState<"stock" | "price" | null>(null);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
+  const [isPending, startTransition] = useTransition();
   const router = useRouter();
-
-  useEffect(() => {
-    setIsLoadingPage(true);
-    mainAxios(`/products?limit=${limit}&skip=${(page - 1) * limit}`)
-      .then((res) => {
-        setProductsData(res.data);
-        setIsError(false);
-      })
-      .catch((error) => {
-        console.log(error.response || error);
-        setIsError(true);
-      })
-      .finally(() => setIsLoadingPage(false));
-  }, [page, limit]);
 
   const sortedProducts = useMemo(() => {
     if (!productsData?.products) return [];
@@ -58,19 +49,24 @@ const ProductsPage: React.FC<ProductPageProps> = ({ page, limit }) => {
     }
   };
 
-  const totalPages = Math.ceil((productsData?.total || 0) / limit);
+  if (!productsData) {
+    return (
+      <div className="flex flex-col items-center justify-center h-[80vh]">
+        <span className="text-red-500">
+          There was a problem retrieving the products. Please try again later or
+          check net connection.
+        </span>
+      </div>
+    );
+  }
+
+  const totalPages = Math.ceil((productsData.total || 0) / limit);
 
   return (
     <div className="flex flex-col max-w-[1700px] mx-auto w-full gap-9 p-4 my-6 items-center h-[92vh] justify-between ">
       <h1 className="heading">products list</h1>
 
-      {isError && (
-        <span className="text-center">
-          There was a problem retrieving the products. Please try again later
-        </span>
-      )}
-
-      {isLoadingPage ? (
+      {isPending ? (
         <Loading />
       ) : (
         <ProductsTable
@@ -86,7 +82,9 @@ const ProductsPage: React.FC<ProductPageProps> = ({ page, limit }) => {
           page={page}
           count={totalPages}
           onChange={(e, newPage) => {
-            router.push(`/products?page=${newPage}&limit=${limit}`);
+            startTransition(() => {
+              router.push(`/products?page=${newPage}&limit=${limit}`);
+            });
           }}
         />
       )}
