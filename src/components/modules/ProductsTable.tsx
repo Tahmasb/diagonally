@@ -22,10 +22,10 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
   onSort,
 }) => {
   return (
-    <div className="overflow-auto w-full">
+    <div className="overflow-auto w-full mb-auto">
       <table className="w-full border-collapse">
         <thead>
-          <tr className="table-row-custom bg-gray-100">
+          <tr className="table-row-custom bg-blue-50">
             <th className="px-2 py-1 text-left">id</th>
             <th className="px-2 py-1 text-left">title</th>
             <SortableHeader

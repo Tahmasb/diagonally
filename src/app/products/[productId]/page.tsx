@@ -1,15 +1,18 @@
 "use client";
 
 import { mainAxios } from "@utils/axios";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Product } from "src/types/Product";
-import Link from "next/link";
+import Image from "next/image";
+import Loading from "@elements/Loading";
 
-const ProductDetails: React.FC<{ params: { productId: string } }> = () => {
-  const { productId } = useParams();
-  const [productData, setProductData] = useState<Product>();
+const ProductDetails: React.FC = () => {
   const [loading, setLoading] = useState(true);
+  const [productData, setProductData] = useState<Product>();
+  const { productId } = useParams();
+
+  const router = useRouter();
 
   useEffect(() => {
     mainAxios(`/products/${productId}`)
@@ -24,25 +27,19 @@ const ProductDetails: React.FC<{ params: { productId: string } }> = () => {
       });
   }, [productId]);
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-96">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-      </div>
-    );
-  }
+  if (loading) return <Loading />;
 
   if (!productData) {
     return (
       <div className="text-center py-20 text-gray-500">
         product not found
         <div className="mt-4">
-          <Link
-            href="/products"
+          <span
+            onClick={() => router.back()}
             className="inline-block px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
           >
             back to product list
-          </Link>
+          </span>
         </div>
       </div>
     );
@@ -64,17 +61,19 @@ const ProductDetails: React.FC<{ params: { productId: string } }> = () => {
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-8">
-      <Link
-        href="/products"
-        className="inline-block mb-6 text-blue-600 hover:underline"
+      <span
+        onClick={() => router.back()}
+        className="inline-block mb-6 text-brand cursor-pointer hover:underline"
       >
         back to products
-      </Link>
+      </span>
 
       <div className="bg-white rounded-lg shadow-lg overflow-hidden">
         <div className="grid grid-cols-1 md:grid-cols-2">
           <div className="bg-gray-100 flex items-center justify-center">
-            <img
+            <Image
+              width={300}
+              height={300}
               src={images?.[0] || "/placeholder.png"}
               alt={title}
               className="object-cover w-full h-full max-h-[500px]"
@@ -89,7 +88,7 @@ const ProductDetails: React.FC<{ params: { productId: string } }> = () => {
             <p className="text-gray-700 mb-6">{description}</p>
 
             <div className="mb-6">
-              <div className="text-3xl font-bold text-green-600">{price} $</div>
+              <div className="text-3xl font-bold">{price} $</div>
               {discountPercentage && (
                 <div className="text-red-500 text-sm">
                   {Math.round(discountPercentage)}% discount
