@@ -27,7 +27,12 @@ const ProductDetails: React.FC = () => {
       });
   }, [productId]);
 
-  if (loading) return <Loading />;
+  if (loading)
+    return (
+      <div className="flex justify-center mt-32">
+        <Loading />
+      </div>
+    );
 
   if (!productData) {
     return (
